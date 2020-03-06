@@ -1,0 +1,15 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP NE555DR
+D Single Precision Timer
+K
+F http://www.ti.com/lit/ds/symlink/ne555.pdf
+$ENDCMP
+#
+$CMP IFX9201SGAUMA1
+D INFINEON - IFX9201SGAUMA1 - MOTOR CONTROLLER, HALF BRIDGE, SOIC-12
+K
+F https://componentsearchengine.com/Datasheets/1/IFX9201SGAUMA1.pdf
+$ENDCMP
+#
+#End Doc Library

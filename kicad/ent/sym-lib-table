@@ -1,5 +1,6 @@
 (sym_lib_table
-  (lib (name ian)(type Legacy)(uri D:/Users/Maarten/Documents/GitHub/PE2/kicad/ian.lib)(options "")(descr ""))
+  (lib (name ian)(type Legacy)(uri ../ian.lib)(options "")(descr ""))
   (lib (name ent-rescue)(type Legacy)(uri ${KIPRJMOD}/ent-rescue.lib)(options "")(descr ""))
-  (lib (name SamacSys_Parts)(type Legacy)(uri "C:/Users/Maarten/Documents/GitHub/PE2/kicad/Library Loader/SamacSys_Parts.lib")(options "")(descr ""))
+  (lib (name SamacSys_Parts)(type Legacy)(uri "../Library Loader/SamacSys_Parts.lib")(options "")(descr ""))
+  (lib (name PJ-082BH)(type Legacy)(uri ../../PJ-082BH.lib)(options "")(descr ""))
 )

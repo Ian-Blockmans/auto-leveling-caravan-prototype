@@ -20,11 +20,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "u8g2.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +49,7 @@ typedef struct accel{
 I2C_HandleTypeDef hi2c1;
 
 /* USER CODE BEGIN PV */
-
+static u8g2_t u8g2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,39 +57,12 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-
+extern uint8_t u8x8_stm32_gpio_and_delay(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr);
+extern uint8_t u8x8_byte_stm32_hw_i2c(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/times.h>
-#include <sys/unistd.h>
-
-int _write(int file, char *ptr, int len) {
-	uint8_t USBStatus;
-    switch (file) {
-    case STDOUT_FILENO: //stdout
-    	USBStatus = CDC_Transmit_FS(ptr,len);
-		if (USBStatus != USBD_OK) {
-			errno = EIO;
-			return -1;
-		}
-        break;
-    case STDERR_FILENO: //stderr
-    	USBStatus = CDC_Transmit_FS(ptr,len);
-		if (USBStatus != USBD_OK) {
-			errno = EIO;
-			return -1;
-		}
-        break;
-    default:
-        errno = EBADF;
-        return -1;
-    }
-    return len;
-}
 
 acc readacc(void){
 	acc axis;
@@ -130,6 +102,7 @@ void legstoground(){
 	}
 
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -162,7 +135,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
-  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   uint8_t buffer[8];
   acc position;
@@ -170,6 +142,11 @@ int main(void)
 	__HAL_RCC_I2C1_FORCE_RESET();
   HAL_Delay(200);
   __HAL_RCC_I2C1_RELEASE_RESET();
+
+  u8g2_Setup_ssd1306_128x32_winstar_1(&u8g2, U8G2_R0, u8x8_byte_stm32_hw_i2c, u8x8_stm32_gpio_and_delay);
+
+  u8g2_InitDisplay(&u8g2);
+  u8g2_SetPowerSave(&u8g2, 0);
 
   buffer[0] = 0x20;
   buffer[1] = 0b01000111;
@@ -220,6 +197,11 @@ int main(void)
 	}
 	if (position.x < -2 && position.y > 2){
 		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_14,1);//fr
+		u8g2_FirstPage(&u8g2);
+		do{
+			u8g2_SetFont(&u8g2,u8g2_font_5x7_tr);
+			u8g2_DrawStr(&u8g2,0,7,"Hello World!");
+		}while (u8g2_NextPage(&u8g2));
 	}
 	if (position.x > 2 && position.y < -2){
 		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_13,1);//bl
@@ -243,7 +225,7 @@ int main(void)
 		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_14,1);
 		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_12,1);
 	}
-	HAL_Delay(10);
+	HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
@@ -256,7 +238,6 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Initializes the CPU, AHB and APB busses clocks 
   */
@@ -281,12 +262,6 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
-  PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }

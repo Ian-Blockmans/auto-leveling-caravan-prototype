@@ -921,7 +921,7 @@ $EndComp
 Text GLabel 2000 4800 0    50   Input ~ 0
 M3OUT2
 Text GLabel 2600 5800 0    50   Input ~ 0
-M3OUT1
+M4OUT1
 $Comp
 L power:GND #PWR?
 U 1 1 5E67CFFA
@@ -971,7 +971,7 @@ F 3 "" H 2000 6000 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text GLabel 2000 5800 0    50   Input ~ 0
-M3OUT2
+M4OUT2
 $Comp
 L power:GND #PWR?
 U 1 1 5E659BDE

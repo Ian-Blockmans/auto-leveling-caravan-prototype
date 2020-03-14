@@ -1,4 +1,4 @@
-16942647537930479
+16945815943231613
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -75277,3 +75277,17 @@ varistor SIOV
 0
 2
 2
+betterLIS
+LGA-14_2x2mm_P0.35mm_LayoutBorder3x4y
+LGA, 14 Pin (http://www.st.com/resource/en/datasheet/lis2dh.pdf), generated with kicad-footprint-generator ipc_noLead_generator.py
+LGA NoLead
+0
+14
+14
+betterLIS
+WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm_ThermalVias
+8-Lead Plastic WSON, 2x2mm Body, 0.5mm Pitch, WSON-8, http://www.ti.com/lit/ds/symlink/lm27761.pdf
+WSON 8 1EP ThermalVias
+0
+14
+9

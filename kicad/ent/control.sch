@@ -1243,4 +1243,92 @@ Wire Wire Line
 Wire Wire Line
 	10050 2100 10050 1950
 Connection ~ 9600 2100
+$Comp
+L Mechanical:MountingHole_Pad H1
+U 1 1 5E6D487A
+P 2050 1100
+F 0 "H1" H 2150 1149 50  0000 L CNN
+F 1 "MountingHole_Pad" H 2150 1058 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 2050 1100 50  0001 C CNN
+F 3 "~" H 2050 1100 50  0001 C CNN
+	1    2050 1100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H2
+U 1 1 5E6D68D1
+P 3050 1100
+F 0 "H2" H 3150 1149 50  0000 L CNN
+F 1 "MountingHole_Pad" H 3150 1058 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 3050 1100 50  0001 C CNN
+F 3 "~" H 3050 1100 50  0001 C CNN
+	1    3050 1100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H3
+U 1 1 5E6D9959
+P 4000 1100
+F 0 "H3" H 4100 1149 50  0000 L CNN
+F 1 "MountingHole_Pad" H 4100 1058 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 4000 1100 50  0001 C CNN
+F 3 "~" H 4000 1100 50  0001 C CNN
+	1    4000 1100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H4
+U 1 1 5E6DC9FA
+P 4900 1100
+F 0 "H4" H 5000 1149 50  0000 L CNN
+F 1 "MountingHole_Pad" H 5000 1058 50  0000 L CNN
+F 2 "MountingHole:MountingHole_3.2mm_M3_Pad" H 4900 1100 50  0001 C CNN
+F 3 "~" H 4900 1100 50  0001 C CNN
+	1    4900 1100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0139
+U 1 1 5E6DF9BF
+P 2050 1200
+F 0 "#PWR0139" H 2050 950 50  0001 C CNN
+F 1 "GND" H 2055 1027 50  0000 C CNN
+F 2 "" H 2050 1200 50  0001 C CNN
+F 3 "" H 2050 1200 50  0001 C CNN
+	1    2050 1200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0140
+U 1 1 5E6E0A3E
+P 3050 1200
+F 0 "#PWR0140" H 3050 950 50  0001 C CNN
+F 1 "GND" H 3055 1027 50  0000 C CNN
+F 2 "" H 3050 1200 50  0001 C CNN
+F 3 "" H 3050 1200 50  0001 C CNN
+	1    3050 1200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0141
+U 1 1 5E6E3D8A
+P 4000 1200
+F 0 "#PWR0141" H 4000 950 50  0001 C CNN
+F 1 "GND" H 4005 1027 50  0000 C CNN
+F 2 "" H 4000 1200 50  0001 C CNN
+F 3 "" H 4000 1200 50  0001 C CNN
+	1    4000 1200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0142
+U 1 1 5E6E6E3C
+P 4900 1200
+F 0 "#PWR0142" H 4900 950 50  0001 C CNN
+F 1 "GND" H 4905 1027 50  0000 C CNN
+F 2 "" H 4900 1200 50  0001 C CNN
+F 3 "" H 4900 1200 50  0001 C CNN
+	1    4900 1200
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

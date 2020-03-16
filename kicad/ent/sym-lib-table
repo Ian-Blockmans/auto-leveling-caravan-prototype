@@ -1,6 +1,6 @@
 (sym_lib_table
-  (lib (name ian)(type Legacy)(uri ../ian.lib)(options "")(descr ""))
+  (lib (name ian)(type Legacy)(uri ${KIPRJMOD}/ian.lib)(options "")(descr ""))
   (lib (name ent-rescue)(type Legacy)(uri ${KIPRJMOD}/ent-rescue.lib)(options "")(descr ""))
-  (lib (name SamacSys_Parts)(type Legacy)(uri "../Library Loader/SamacSys_Parts.lib")(options "")(descr ""))
-  (lib (name PJ-082BH)(type Legacy)(uri ../../PJ-082BH.lib)(options "")(descr ""))
+  (lib (name SamacSys_Parts)(type Legacy)(uri "${KIPRJMOD}/Library Loader/SamacSys_Parts.lib")(options "")(descr ""))
+  (lib (name PJ-082BH)(type Legacy)(uri ${KIPRJMOD}/PJ-082BH.lib)(options "")(descr ""))
 )

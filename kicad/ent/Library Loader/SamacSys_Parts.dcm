@@ -12,4 +12,10 @@ K
 F https://componentsearchengine.com/Datasheets/1/IFX9201SGAUMA1.pdf
 $ENDCMP
 #
+$CMP PJ-082BH
+D DC Power Connectors 2.5mm x 5.5mm horz
+K
+F https://componentsearchengine.com/Datasheets/1/PJ-082BH.pdf
+$ENDCMP
+#
 #End Doc Library

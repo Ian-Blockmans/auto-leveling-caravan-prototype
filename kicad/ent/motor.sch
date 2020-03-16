@@ -985,4 +985,108 @@ F 3 "" H 6250 1200 50  0001 C CNN
 	1    6250 1200
 	1    0    0    -1  
 $EndComp
+$Comp
+L Mechanical:MountingHole_Pad H?
+U 1 1 5E723063
+P 10100 900
+AR Path="/5E723063" Ref="H?"  Part="1" 
+AR Path="/5E68BD2A/5E723063" Ref="H7"  Part="1" 
+F 0 "H7" H 10200 949 50  0000 L CNN
+F 1 "MountingHole_Pad" H 10200 858 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2_Pad" H 10100 900 50  0001 C CNN
+F 3 "~" H 10100 900 50  0001 C CNN
+	1    10100 900 
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H?
+U 1 1 5E723069
+P 10100 1350
+AR Path="/5E723069" Ref="H?"  Part="1" 
+AR Path="/5E68BD2A/5E723069" Ref="H8"  Part="1" 
+F 0 "H8" H 10200 1399 50  0000 L CNN
+F 1 "MountingHole_Pad" H 10200 1308 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2_Pad" H 10100 1350 50  0001 C CNN
+F 3 "~" H 10100 1350 50  0001 C CNN
+	1    10100 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H?
+U 1 1 5E72306F
+P 9200 900
+AR Path="/5E72306F" Ref="H?"  Part="1" 
+AR Path="/5E68BD2A/5E72306F" Ref="H5"  Part="1" 
+F 0 "H5" H 9300 949 50  0000 L CNN
+F 1 "MountingHole_Pad" H 9300 858 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2_Pad" H 9200 900 50  0001 C CNN
+F 3 "~" H 9200 900 50  0001 C CNN
+	1    9200 900 
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H?
+U 1 1 5E723075
+P 9200 1350
+AR Path="/5E723075" Ref="H?"  Part="1" 
+AR Path="/5E68BD2A/5E723075" Ref="H6"  Part="1" 
+F 0 "H6" H 9300 1399 50  0000 L CNN
+F 1 "MountingHole_Pad" H 9300 1308 50  0000 L CNN
+F 2 "MountingHole:MountingHole_2.2mm_M2_Pad" H 9200 1350 50  0001 C CNN
+F 3 "~" H 9200 1350 50  0001 C CNN
+	1    9200 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E72307B
+P 10100 1000
+AR Path="/5E72307B" Ref="#PWR?"  Part="1" 
+AR Path="/5E68BD2A/5E72307B" Ref="#PWR0106"  Part="1" 
+F 0 "#PWR0106" H 10100 750 50  0001 C CNN
+F 1 "GND" H 10105 827 50  0000 C CNN
+F 2 "" H 10100 1000 50  0001 C CNN
+F 3 "" H 10100 1000 50  0001 C CNN
+	1    10100 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E723081
+P 10100 1450
+AR Path="/5E723081" Ref="#PWR?"  Part="1" 
+AR Path="/5E68BD2A/5E723081" Ref="#PWR0107"  Part="1" 
+F 0 "#PWR0107" H 10100 1200 50  0001 C CNN
+F 1 "GND" H 10105 1277 50  0000 C CNN
+F 2 "" H 10100 1450 50  0001 C CNN
+F 3 "" H 10100 1450 50  0001 C CNN
+	1    10100 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E723087
+P 9200 1450
+AR Path="/5E723087" Ref="#PWR?"  Part="1" 
+AR Path="/5E68BD2A/5E723087" Ref="#PWR0108"  Part="1" 
+F 0 "#PWR0108" H 9200 1200 50  0001 C CNN
+F 1 "GND" H 9205 1277 50  0000 C CNN
+F 2 "" H 9200 1450 50  0001 C CNN
+F 3 "" H 9200 1450 50  0001 C CNN
+	1    9200 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E72308D
+P 9200 1000
+AR Path="/5E72308D" Ref="#PWR?"  Part="1" 
+AR Path="/5E68BD2A/5E72308D" Ref="#PWR0109"  Part="1" 
+F 0 "#PWR0109" H 9200 750 50  0001 C CNN
+F 1 "GND" H 9205 827 50  0000 C CNN
+F 2 "" H 9200 1000 50  0001 C CNN
+F 3 "" H 9200 1000 50  0001 C CNN
+	1    9200 1000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

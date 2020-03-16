@@ -985,4 +985,92 @@ F 3 "" H 6250 1200 50  0001 C CNN
 	1    6250 1200
 	1    0    0    -1  
 $EndComp
+$Comp
+L Mechanical:MountingHole_Pad H?
+U 1 1 5E723063
+P 10100 900
+F 0 "H?" H 10200 949 50  0000 L CNN
+F 1 "MountingHole_Pad" H 10200 858 50  0000 L CNN
+F 2 "" H 10100 900 50  0001 C CNN
+F 3 "~" H 10100 900 50  0001 C CNN
+	1    10100 900 
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H?
+U 1 1 5E723069
+P 10100 1350
+F 0 "H?" H 10200 1399 50  0000 L CNN
+F 1 "MountingHole_Pad" H 10200 1308 50  0000 L CNN
+F 2 "" H 10100 1350 50  0001 C CNN
+F 3 "~" H 10100 1350 50  0001 C CNN
+	1    10100 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H?
+U 1 1 5E72306F
+P 9200 900
+F 0 "H?" H 9300 949 50  0000 L CNN
+F 1 "MountingHole_Pad" H 9300 858 50  0000 L CNN
+F 2 "" H 9200 900 50  0001 C CNN
+F 3 "~" H 9200 900 50  0001 C CNN
+	1    9200 900 
+	1    0    0    -1  
+$EndComp
+$Comp
+L Mechanical:MountingHole_Pad H?
+U 1 1 5E723075
+P 9200 1350
+F 0 "H?" H 9300 1399 50  0000 L CNN
+F 1 "MountingHole_Pad" H 9300 1308 50  0000 L CNN
+F 2 "" H 9200 1350 50  0001 C CNN
+F 3 "~" H 9200 1350 50  0001 C CNN
+	1    9200 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E72307B
+P 10100 1000
+F 0 "#PWR?" H 10100 750 50  0001 C CNN
+F 1 "GND" H 10105 827 50  0000 C CNN
+F 2 "" H 10100 1000 50  0001 C CNN
+F 3 "" H 10100 1000 50  0001 C CNN
+	1    10100 1000
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E723081
+P 10100 1450
+F 0 "#PWR?" H 10100 1200 50  0001 C CNN
+F 1 "GND" H 10105 1277 50  0000 C CNN
+F 2 "" H 10100 1450 50  0001 C CNN
+F 3 "" H 10100 1450 50  0001 C CNN
+	1    10100 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E723087
+P 9200 1450
+F 0 "#PWR?" H 9200 1200 50  0001 C CNN
+F 1 "GND" H 9205 1277 50  0000 C CNN
+F 2 "" H 9200 1450 50  0001 C CNN
+F 3 "" H 9200 1450 50  0001 C CNN
+	1    9200 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E72308D
+P 9200 1000
+F 0 "#PWR?" H 9200 750 50  0001 C CNN
+F 1 "GND" H 9205 827 50  0000 C CNN
+F 2 "" H 9200 1000 50  0001 C CNN
+F 3 "" H 9200 1000 50  0001 C CNN
+	1    9200 1000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

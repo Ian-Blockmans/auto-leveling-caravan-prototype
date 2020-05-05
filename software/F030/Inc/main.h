@@ -60,6 +60,24 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define STOP1_Pin GPIO_PIN_0
+#define STOP1_GPIO_Port GPIOA
+#define STOP2_Pin GPIO_PIN_1
+#define STOP2_GPIO_Port GPIOA
+#define STOP3_Pin GPIO_PIN_2
+#define STOP3_GPIO_Port GPIOA
+#define STOP4_Pin GPIO_PIN_3
+#define STOP4_GPIO_Port GPIOA
+#define Extend_Pin GPIO_PIN_4
+#define Extend_GPIO_Port GPIOA
+#define Retract_Pin GPIO_PIN_5
+#define Retract_GPIO_Port GPIOA
+#define LED_Pin GPIO_PIN_10
+#define LED_GPIO_Port GPIOA
+#define INT2_Pin GPIO_PIN_11
+#define INT2_GPIO_Port GPIOA
+#define INT2A12_Pin GPIO_PIN_12
+#define INT2A12_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

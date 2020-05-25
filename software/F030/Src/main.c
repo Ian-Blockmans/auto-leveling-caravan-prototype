@@ -67,10 +67,10 @@ static void MX_TIM14_Init(void);
 /* USER CODE BEGIN PFP */
 acc readacc();
 err legstoground();
-void c_back_right(uint8_t dir, uint8_t duty, uint8_t onoff);
-void c_back_left(uint8_t dir, uint8_t duty, uint8_t onoff);
-void c_front_right(uint8_t dir, uint8_t duty, uint8_t onoff);
-void c_front_left(uint8_t dir, uint8_t duty, uint8_t onoff);
+void c_back_right(uint8_t dir, uint8_t onoff);
+void c_back_left(uint8_t dir, uint8_t onoff);
+void c_front_right(uint8_t dir, uint8_t onoff);
+void c_front_left(uint8_t dir, uint8_t onoff);
 err fronttoback();
 uint8_t lefttoright();
 
@@ -90,13 +90,24 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 acc readacc() {
 	acc axis;
 	uint8_t i2cbuffer[8];
-	HAL_StatusTypeDef ok;
+	HAL_StatusTypeDef ok = HAL_ERROR;
 	//i2cbuffer[0] = 0x28;
 	//HAL_I2C_Master_Transmit(&hi2c1,0b0011001<<1,i2cbuffer,1,500);//ask
 	//HAL_I2C_Master_Receive(&hi2c1,0b00110011,i2cbuffer,6,500);//get
-	ok = HAL_I2C_Mem_Read(&hi2c1, 0b00110010, 0x29, 1, &i2cbuffer[0], 1, 500);
-	ok = HAL_I2C_Mem_Read(&hi2c1, 0b00110010, 0x2b, 1, &i2cbuffer[1], 1, 500);
-	ok = HAL_I2C_Mem_Read(&hi2c1, 0b00110010, 0x2d, 1, &i2cbuffer[2], 1, 500);
+	while (ok != HAL_OK) {
+		ok = HAL_I2C_Mem_Read(&hi2c1, 0b00110010, 0x29, I2C_MEMADD_SIZE_8BIT,
+				&i2cbuffer[0], 1, HAL_MAX_DELAY);
+	}
+	ok = HAL_ERROR;
+	while (ok != HAL_OK) {
+		ok = HAL_I2C_Mem_Read(&hi2c1, 0b00110010, 0x2b, I2C_MEMADD_SIZE_8BIT,
+				&i2cbuffer[1], 1, HAL_MAX_DELAY);
+	}
+	ok = HAL_ERROR;
+	while (ok != HAL_OK) {
+		ok = HAL_I2C_Mem_Read(&hi2c1, 0b00110010, 0x2d, I2C_MEMADD_SIZE_8BIT,
+				&i2cbuffer[2], 1, HAL_MAX_DELAY);
+	}
 	//HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
 	axis.x = i2cbuffer[0];
 	axis.y = i2cbuffer[1];
@@ -117,14 +128,17 @@ err legstoground() {
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.y - 2 < pos.y) {
-			c_front_left(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_front_left(1, 1);
 			HAL_Delay(500);
-			c_front_left(1, 80, 0);
-			HAL_Delay(1000);
+			c_front_left(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
 			//wacht tot de grond is geraakt
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -133,23 +147,26 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_front_left(0, 80, 1);
+		c_front_left(0, 1);
 		HAL_Delay(500);
-		c_front_left(0, 80, 0);
+		c_front_left(0, 0);
 		HAL_Delay(1000);
 
 		init_pos = readacc();
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.y - 2 < pos.y) {
-			c_front_right(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_front_right(1, 1);
 			HAL_Delay(500);
-			c_front_right(1, 80, 0);
-			HAL_Delay(1000);
+			c_front_right(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
 			////wacht tot de grond is geraakt
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -158,24 +175,27 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_front_right(0, 80, 1);
+		c_front_right(0, 1);
 		HAL_Delay(500);
-		c_front_right(0, 80, 0);
+		c_front_right(0, 0);
 
 		//kantel
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (pos.y > -10) {
-			c_front_left(1, 80, 1);
-			c_front_right(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_front_left(1, 1);
+			c_front_right(1, 1);
 			HAL_Delay(500);
-			c_front_left(1, 80, 0);
-			c_front_right(1, 80, 0);
-			HAL_Delay(1000);
+			c_front_left(1, 0);
+			c_front_right(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
 			kantel_count++;
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -184,11 +204,11 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_front_left(0, 80, 1);
-		c_front_right(0, 80, 1);
+		c_front_left(0, 1);
+		c_front_right(0, 1);
 		HAL_Delay(500);
-		c_front_left(0, 80, 0);
-		c_front_right(0, 80, 0);
+		c_front_left(0, 0);
+		c_front_right(0, 0);
 		HAL_Delay(2000);
 
 		//start back
@@ -196,13 +216,17 @@ err legstoground() {
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.y + 2 > pos.y) {
-			c_back_left(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_back_left(1, 1);
 			HAL_Delay(500);
-			c_back_left(1, 80, 0);
+			c_back_left(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
 			//wacht tot de grond is geraakt
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -211,23 +235,26 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_back_left(0, 80, 1);
+		c_back_left(0, 1);
 		HAL_Delay(500);
-		c_back_left(0, 80, 0);
+		c_back_left(0, 0);
 
 		HAL_Delay(1000);
 		init_pos = readacc();
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.y + 2 > pos.y && init_pos.x + 2 > pos.x) {
-			c_back_right(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_back_right(1, 1);
 			HAL_Delay(500);
-			c_back_right(1, 80, 0);
-			HAL_Delay(1000);
+			c_back_right(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
 			//wacht tot de grond is geraakt
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -236,22 +263,26 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_back_right(0, 80, 1);
+		c_back_right(0, 1);
 		HAL_Delay(500);
-		c_back_right(0, 80, 0);
+		c_back_right(0, 0);
 	} else {
 		//start back
 		init_pos = readacc();
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.y + 2 > pos.y) {
-			c_back_left(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_back_left(1, 1);
 			HAL_Delay(500);
-			c_back_left(1, 80, 0);
+			c_back_left(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
 			//wacht tot de grond is geraakt
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -260,22 +291,25 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_back_left(0, 80, 1);
+		c_back_left(0, 1);
 		HAL_Delay(500);
-		c_back_left(0, 80, 0);
+		c_back_left(0, 0);
 
 		init_pos = readacc();
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.y + 2 > pos.y) {
-			c_back_right(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_back_right(1, 1);
 			HAL_Delay(500);
-			c_back_right(1, 80, 0);
-			HAL_Delay(1000);
+			c_back_right(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
 			////wacht tot de grond is geraakt
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -284,23 +318,26 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_back_right(0, 80, 1);
+		c_back_right(0, 1);
 		HAL_Delay(500);
-		c_back_right(0, 80, 0);
+		c_back_right(0, 0);
 
 		//kantel
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (pos.y < 0) {
-			c_back_left(1, 80, 1);
-			c_back_right(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_back_left(1, 1);
+			c_back_right(1, 1);
 			HAL_Delay(500);
-			c_back_left(1, 80, 0);
-			c_back_right(1, 80, 0);
-			HAL_Delay(1000);
+			c_back_left(1, 0);
+			c_back_right(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -309,11 +346,11 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_back_left(0, 80, 1);
-		c_back_right(0, 80, 1);
+		c_back_left(0, 1);
+		c_back_right(0, 1);
 		HAL_Delay(1000);
-		c_back_left(0, 80, 0);
-		c_back_right(0, 80, 0);
+		c_back_left(0, 0);
+		c_back_right(0, 0);
 		HAL_Delay(2000);
 
 		//start front
@@ -321,14 +358,17 @@ err legstoground() {
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.y - 2 < pos.y) {
-			c_front_left(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_front_left(1, 1);
 			HAL_Delay(500);
-			c_front_left(1, 80, 0);
-			HAL_Delay(1000);
+			c_front_left(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
 			//wacht tot de grond is geraakt
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -337,22 +377,25 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_front_left(0, 80, 1);
+		c_front_left(0, 1);
 		HAL_Delay(500);
-		c_front_left(0, 80, 0);
+		c_front_left(0, 0);
 
 		init_pos = readacc();
 		pos = readacc();
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.y - 2 < pos.y || init_pos.x + 2 < pos.x) {
-			c_front_right(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_front_right(1, 1);
 			HAL_Delay(500);
-			c_front_right(1, 80, 0);
-			HAL_Delay(1000);
+			c_front_right(1, 0);
+			HAL_Delay(500);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(500);
 			pos = readacc();
 			HAL_Delay(1000);
 			//wacht tot de grond is geraakt
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -361,24 +404,25 @@ err legstoground() {
 		}
 		HAL_TIM_Base_Stop_IT(&htim14);
 		TIM14->CNT = 0;
-		c_front_right(0, 80, 1);
+		c_front_right(0, 1);
 		HAL_Delay(500);
-		c_front_right(0, 80, 0);
+		c_front_right(0, 0);
 
 	}
 	return 0;
 }
 
 void legsup() {
-	c_back_right(0, 80, 1);
-	c_back_left(0, 80, 1);
-	c_front_right(0, 80, 1);
-	c_front_left(0, 80, 1);
+	c_back_right(0, 1);
+	c_back_left(0, 1);
+	c_front_right(0, 1);
+	c_front_left(0, 1);
 	HAL_Delay(20000);
-	c_back_right(0, 80, 0);
-	c_back_left(0, 80, 0);
-	c_front_right(0, 80, 0);
-	c_front_left(0, 80, 0);
+	c_back_right(0, 0);
+	c_back_left(0, 0);
+	c_front_right(0, 0);
+	c_front_left(0, 0);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
 }
 
 err fronttoback() {
@@ -388,32 +432,37 @@ err fronttoback() {
 
 	pos = readacc();
 	HAL_TIM_Base_Start_IT(&htim14);
-	while (pos.y < -7 || pos.y > -5) {
-		if (pos.y < -6) {
-			c_back_left(1, 80, 1);
-			c_back_right(1, 80, 1);
+	while (pos.y < -2 || pos.y > 0) {
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+		if (pos.y < -1) {
+			c_back_left(1, 1);
+			c_back_right(1, 1);
 			HAL_Delay(200);
-			c_back_left(1, 80, 0);
-			c_back_right(1, 80, 0);
-			HAL_Delay(2000);
+			c_back_left(1, 0);
+			c_back_right(1, 0);
+			HAL_Delay(800);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(1200);
 			pos = readacc();
 			HAL_Delay(1000);
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
 				return TIMEOUT;
 			}
 		} else {
-			c_front_left(1, 80, 1);
-			c_front_right(1, 80, 1);
+			c_front_left(1, 1);
+			c_front_right(1, 1);
 			HAL_Delay(200);
-			c_front_left(1, 80, 0);
-			c_front_right(1, 80, 0);
-			HAL_Delay(2000);
+			c_front_left(1, 0);
+			c_front_right(1, 0);
+			HAL_Delay(800);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(1200);
 			pos = readacc();
 			HAL_Delay(1000);
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -433,29 +482,34 @@ uint8_t lefttoright() {
 //front fix
 	pos = readacc();
 	HAL_TIM_Base_Start_IT(&htim14);
-	while (pos.x < -3 || pos.x > 0) {
-		if (pos.x < -1) {
-			c_front_right(1, 80, 1);
-			c_back_right(1, 80, 1);
+	while (pos.x < -1 || pos.x > 1) {
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+		if (pos.x < 0) {
+			c_front_right(1, 1);
+			c_back_right(1, 1);
 			HAL_Delay(200);
-			c_front_right(1, 80, 0);
-			c_back_right(1, 80, 0);
-			HAL_Delay(1000);
+			c_front_right(1, 0);
+			c_back_right(1, 0);
+			HAL_Delay(800);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(1200);
 			pos = readacc();
 			HAL_Delay(1000);
 			last_up = 1;
 		} else {
-			c_front_left(1, 80, 1);
-			c_back_left(1, 80, 1);
-			HAL_Delay(500);
-			c_front_left(1, 80, 0);
-			c_back_left(1, 80, 0);
-			HAL_Delay(1000);
+			c_front_left(1, 1);
+			c_back_left(1, 1);
+			HAL_Delay(200);
+			c_front_left(1, 0);
+			c_back_left(1, 0);
+			HAL_Delay(800);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(1200);
 			pos = readacc();
 			HAL_Delay(1000);
 			last_up = 2;
 		}
-		if (timeout == 1) {
+		if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 			HAL_TIM_Base_Stop_IT(&htim14);
 			TIM14->CNT = 0;
 			timeout = 0;
@@ -474,15 +528,18 @@ err legs_down_last(uint8_t leg_fix) {
 	if (leg_fix == 1) {
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.x - 2 < pos.x) {
-			c_front_left(1, 80, 1);
-			c_back_left(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_front_left(1, 1);
+			c_back_left(1, 1);
 			HAL_Delay(500);
-			c_front_left(1, 80, 0);
-			c_back_left(1, 80, 0);
-			HAL_Delay(1000);
+			c_front_left(1, 0);
+			c_back_left(1, 0);
+			HAL_Delay(800);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(1200);
 			pos = readacc();
 			HAL_Delay(1000);
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -494,15 +551,18 @@ err legs_down_last(uint8_t leg_fix) {
 	} else if (leg_fix == 2) {
 		HAL_TIM_Base_Start_IT(&htim14);
 		while (init_pos.x + 2 > pos.x) {
-			c_front_right(1, 80, 1);
-			c_back_right(1, 80, 1);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+			c_front_right(1, 1);
+			c_back_right(1, 1);
 			HAL_Delay(500);
-			c_front_right(1, 80, 0);
-			c_back_right(1, 80, 0);
-			HAL_Delay(1000);
+			c_front_right(1, 0);
+			c_back_right(1, 0);
+			HAL_Delay(800);
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+			HAL_Delay(1200);
 			pos = readacc();
 			HAL_Delay(1000);
-			if (timeout == 1) {
+			if (timeout == 1 || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0) {
 				HAL_TIM_Base_Stop_IT(&htim14);
 				TIM14->CNT = 0;
 				timeout = 0;
@@ -516,7 +576,7 @@ err legs_down_last(uint8_t leg_fix) {
 	return OK;
 }
 
-void c_back_right(uint8_t dir, uint8_t duty, uint8_t onoff) {
+void c_back_right(uint8_t dir, uint8_t onoff) {
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_15, dir);
 	if (onoff == 1) {
 		HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
@@ -525,7 +585,7 @@ void c_back_right(uint8_t dir, uint8_t duty, uint8_t onoff) {
 	}
 }
 
-void c_front_right(uint8_t dir, uint8_t duty, uint8_t onoff) {
+void c_front_right(uint8_t dir, uint8_t onoff) {
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, dir);
 	if (onoff == 1) {
 		HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
@@ -534,7 +594,7 @@ void c_front_right(uint8_t dir, uint8_t duty, uint8_t onoff) {
 	}
 }
 
-void c_front_left(uint8_t dir, uint8_t duty, uint8_t onoff) {
+void c_front_left(uint8_t dir, uint8_t onoff) {
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, dir);
 	if (onoff == 1) {
 		HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
@@ -543,7 +603,7 @@ void c_front_left(uint8_t dir, uint8_t duty, uint8_t onoff) {
 	}
 }
 
-void c_back_left(uint8_t dir, uint8_t duty, uint8_t onoff) {
+void c_back_left(uint8_t dir, uint8_t onoff) {
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, dir);
 	if (onoff == 1) {
 		HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
@@ -578,6 +638,24 @@ uint8_t debounce100(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin) {
 	}
 }
 
+void init() {
+	uint8_t buffer[8];
+	buffer[0] = 0x20;
+	buffer[1] = 0b01000111;
+	HAL_StatusTypeDef status;
+	status = HAL_I2C_Master_Transmit(&hi2c1, 0b0011001 << 1, buffer, 2, 500);
+	while (status != HAL_OK) {
+		status = HAL_I2C_Master_Transmit(&hi2c1, 0b0011000 << 1, buffer, 2,
+				HAL_MAX_DELAY);
+	}	// config acc
+
+	// initial false interupt fix
+	HAL_TIM_Base_Start_IT(&htim14);
+	HAL_Delay(10);
+	HAL_TIM_Base_Stop_IT(&htim14);
+	TIM14->CNT = 0;
+	timeout = 0;
+}
 /* USER CODE END 0 */
 
 /**
@@ -611,20 +689,10 @@ int main(void) {
 	MX_I2C1_Init();
 	MX_TIM14_Init();
 	/* USER CODE BEGIN 2 */
-	uint8_t buffer[8];
+	init();
+
 	uint8_t leg_fix;
 	err status_legs;
-
-	buffer[0] = 0x20;
-	buffer[1] = 0b01000111;
-	HAL_StatusTypeDef status;
-	status = HAL_I2C_Master_Transmit(&hi2c1, 0b0011001 << 1, buffer, 2, 500);
-	if (status != HAL_OK) {
-		while (1)
-			;
-		//status = HAL_I2C_Master_Transmit(&hi2c1,0b0011000<<1,buffer,2,500);
-	}	// config acc
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, 0);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -634,6 +702,7 @@ int main(void) {
 
 		/* USER CODE BEGIN 3 */
 		if (debounce100(GPIOA, GPIO_PIN_4)) {
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
 			status_legs = legstoground();
 			if (status_legs == OK) {
 				status_legs = fronttoback();
@@ -641,8 +710,17 @@ int main(void) {
 					leg_fix = lefttoright();
 					if (leg_fix > 0) {
 						legs_down_last(leg_fix);
-						fronttoback();
-						lefttoright();
+						status_legs = fronttoback();
+						if (status_legs == OK) {
+							leg_fix = lefttoright();
+							if (leg_fix == 0) {
+								legsup();
+							} else {
+								HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+							}
+						} else {
+							legsup();
+						}
 					} else {
 						legsup();
 					}
@@ -822,9 +900,9 @@ static void MX_TIM14_Init(void) {
 
 	/* USER CODE END TIM14_Init 1 */
 	htim14.Instance = TIM14;
-	htim14.Init.Prescaler = 25000;
+	htim14.Init.Prescaler = 40000;
 	htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim14.Init.Period = 25600;
+	htim14.Init.Period = 36000;
 	htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim14.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	if (HAL_TIM_Base_Init(&htim14) != HAL_OK) {
